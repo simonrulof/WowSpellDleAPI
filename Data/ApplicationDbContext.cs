@@ -66,12 +66,6 @@ public class ApplicationDbContext : DbContext
                 .HasForeignKey(e => e.NameId)
                 .OnDelete(DeleteBehavior.Restrict);
             
-            // Foreign key relationship to Description (SpellGenericColumn)
-            entity.HasOne(e => e.Description)
-                .WithMany()
-                .HasForeignKey(e => e.DescriptionId)
-                .OnDelete(DeleteBehavior.Restrict);
-            
             // Foreign key relationship to Class (SpellGenericColumn)
             entity.HasOne(e => e.Class)
                 .WithMany()
@@ -111,7 +105,6 @@ public class ApplicationDbContext : DbContext
             
             // Indexes for foreign keys
             entity.HasIndex(e => e.NameId);
-            entity.HasIndex(e => e.DescriptionId);
             entity.HasIndex(e => e.ClassId);
             entity.HasIndex(e => e.SchoolId);
             entity.HasIndex(e => e.UseTypeId);

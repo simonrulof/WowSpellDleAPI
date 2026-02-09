@@ -19,8 +19,14 @@ namespace WowSpellDleAPI.Logic
         public List<SpellModel> GetAllSpells()
         {
             var spellList = new List<SpellModel>();
+            
+            var spells = _context.Spells
+                .Include(s => s.Name)
+                .Include( s => s.School)
+                .Include(s => s.UseType)
+                .Include(s => s.Class)
+                .ToList();
 
-            var spells = _context.Spells.ToList();
             foreach (var spell in spells)
             {
                 var id = spell.Id;
@@ -38,7 +44,6 @@ namespace WowSpellDleAPI.Logic
         public TranslationFields CreateTranslationFields(string lang, Spell spell)
         {
             string name = spell.Name.GetByLanguage(lang);
-            string description = spell.Description.GetByLanguage(lang);
             string _class = spell.Class.GetByLanguage(lang);
             List<string> specs = new List<string>();
             foreach (var spec in spell.Specs)
@@ -48,7 +53,7 @@ namespace WowSpellDleAPI.Logic
             string school = spell.School.GetByLanguage(lang);
             string useType = spell.UseType.GetByLanguage(lang);
 
-            return new TranslationFields(name, description, _class, specs, school, useType);
+            return new TranslationFields(name, _class, specs, school, useType);
         }
         
         private Spell GenerateDailySpell()
@@ -65,7 +70,12 @@ namespace WowSpellDleAPI.Logic
             {
                 identToPreviouses = false;
                 int toSkip = rand.Next(0, _context.DailySpells.Count());
-                spell = _context.DailySpells.Skip(toSkip).Take(1).First().Spell;
+                spell = _context.Spells.Skip(toSkip).Take(1)
+                .Include(s => s.Name)
+                .Include(s => s.School)
+                .Include(s => s.UseType)
+                .Include(s => s.Class)
+                .First();
                 
                 for (int i = 1; i < 10; i++) // check the 10 previous spells
                 {
@@ -79,6 +89,9 @@ namespace WowSpellDleAPI.Logic
                 }
             } while(identToPreviouses);
 
+            _context.DailySpells.Add(new DailySpell(DateOnly.FromDateTime(today), spell.Id));
+            _context.SaveChanges();
+
             return spell;
         }
 
@@ -87,7 +100,13 @@ namespace WowSpellDleAPI.Logic
             var dailySpell = _context.DailySpells.Where(ds => ds.Date == DateOnly.FromDateTime(date));
             if (dailySpell.Any())
             {
-                return dailySpell.First().Spell;
+                return dailySpell
+                    .Include(ds => ds.Spell)
+                    .Include(ds => ds.Spell.Name)
+                    .Include(ds => ds.Spell.School)
+                    .Include(ds => ds.Spell.UseType)
+                    .Include(ds => ds.Spell.Class)
+                    .First().Spell;
             }
             if (DateOnly.FromDateTime(date) != DateOnly.FromDateTime(DateTime.Now))
             {
@@ -104,7 +123,12 @@ namespace WowSpellDleAPI.Logic
             if (!spells.Any())
                 throw new Exception("guess id not correct.");
 
-            var guessedSpell = spells.First();
+            var guessedSpell = spells
+                .Include(s => s.Name)
+                .Include(s => s.School)
+                .Include(s => s.UseType)
+                .Include(s => s.Class)
+                .First();
             var dailySpell = GetDailySpell(date);
 
 

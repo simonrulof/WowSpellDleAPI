@@ -71,9 +71,6 @@ namespace WowSpellDleAPI.Migrations
                     b.Property<int>("Cooldown")
                         .HasColumnType("integer");
 
-                    b.Property<int>("DescriptionId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("IconPath")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -91,8 +88,6 @@ namespace WowSpellDleAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClassId");
-
-                    b.HasIndex("DescriptionId");
 
                     b.HasIndex("NameId");
 
@@ -196,12 +191,6 @@ namespace WowSpellDleAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("WowSpellDleAPI.Models.SpellGenericColumn", "Description")
-                        .WithMany()
-                        .HasForeignKey("DescriptionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("WowSpellDleAPI.Models.SpellGenericColumn", "Name")
                         .WithMany()
                         .HasForeignKey("NameId")
@@ -221,8 +210,6 @@ namespace WowSpellDleAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Class");
-
-                    b.Navigation("Description");
 
                     b.Navigation("Name");
 

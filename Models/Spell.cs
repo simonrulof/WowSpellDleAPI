@@ -11,7 +11,6 @@ public class Spell
 
     public Spell(int _id,
                  SpellGenericColumn _name,
-                 SpellGenericColumn _description,
                  SpellGenericColumn _class,
                  SpellGenericColumn _school,
                  SpellGenericColumn _useType, 
@@ -21,7 +20,6 @@ public class Spell
     {
         Id = _id;
         Name = _name;
-        Description = _description;
         Class = _class;
         School = _school;
         UseType = _useType;
@@ -36,10 +34,6 @@ public class Spell
     [Required]
     public int NameId { get; set; }
     public SpellGenericColumn Name { get; set; } = null!;
-
-    [Required]
-    public int DescriptionId { get; set; }
-    public SpellGenericColumn Description { get; set; } = null!;
 
     [Required]
     public int ClassId { get; set; }

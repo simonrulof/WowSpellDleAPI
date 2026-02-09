@@ -42,10 +42,9 @@ public class Translations
 
 public class TranslationFields
 {
-    public TranslationFields (string _name, string _description, string _class, List<string> _spec, string _school, string _useType)
+    public TranslationFields (string _name, string _class, List<string> _spec, string _school, string _useType)
     {
         Name = _name;
-        Description = _description;
         Class = _class;
         Spec = _spec;
         School = _school;
@@ -53,7 +52,6 @@ public class TranslationFields
     }
 
     public string Name { get; set; }
-    public string Description { get; set; }
     public string Class { get; set; }
     public List<string> Spec { get; set; }
     public string School { get; set; }

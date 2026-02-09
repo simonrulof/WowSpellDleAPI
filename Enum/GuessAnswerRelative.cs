@@ -2,8 +2,8 @@
 {
     public enum GuessFieldAnswerRelative
     {
-        Correct,
-        More,
-        Less
+        Correct = 1,
+        More = 3,
+        Less = 4
     }
 }

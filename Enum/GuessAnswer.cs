@@ -2,8 +2,8 @@
 {
     public enum GuessFieldAnswer
     {
-        Correct,
-        Incorrect,
-        PartiallyCorrect
+        Correct = 1,
+        Incorrect = 0,
+        PartiallyCorrect = 2
     }
 }
