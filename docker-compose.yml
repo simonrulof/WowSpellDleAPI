@@ -11,5 +11,5 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:5052
-      - ConnectionStrings__DefaultConnection=Host=host.docker.internal;Database=WowSpellDle;Username=myuser;Password=mypassword
-    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
