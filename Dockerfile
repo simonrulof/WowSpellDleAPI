@@ -17,7 +17,7 @@ RUN dotnet publish "WowSpellDleAPI.csproj" -c Release -o /app/publish /p:UseAppH
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
-EXPOSE 8080
+EXPOSE 5052
 
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "WowSpellDleAPI.dll"]
