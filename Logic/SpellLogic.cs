@@ -25,6 +25,7 @@ namespace WowSpellDleAPI.Logic
                 .Include( s => s.School)
                 .Include(s => s.UseType)
                 .Include(s => s.Class)
+                .Include(s => s.Specs)
                 .ToList();
 
             foreach (var spell in spells)
@@ -69,18 +70,20 @@ namespace WowSpellDleAPI.Logic
             do
             {
                 identToPreviouses = false;
-                int toSkip = rand.Next(0, _context.DailySpells.Count());
+                int toSkip = rand.Next(0, _context.Spells.Count());
                 spell = _context.Spells.Skip(toSkip).Take(1)
                 .Include(s => s.Name)
                 .Include(s => s.School)
                 .Include(s => s.UseType)
                 .Include(s => s.Class)
+                .Include(s => s.Specs)
                 .First();
                 
                 for (int i = 1; i < 10; i++) // check the 10 previous spells
                 {
                     DateOnly date = DateOnly.FromDateTime(today.AddDays(-1 * i));
-                    var previousDailySpell = _context.DailySpells.Where(ds => ds.Date == date);
+                    var previousDailySpell = _context.DailySpells.Where(ds => ds.Date == date)
+                        .Include(ds => ds.Spell);
                     if (previousDailySpell.Any() && previousDailySpell.First().Spell.Id == spell.Id)
                     {
                         identToPreviouses = true;
@@ -106,6 +109,7 @@ namespace WowSpellDleAPI.Logic
                     .Include(ds => ds.Spell.School)
                     .Include(ds => ds.Spell.UseType)
                     .Include(ds => ds.Spell.Class)
+                    .Include(ds => ds.Spell.Specs)
                     .First().Spell;
             }
             if (DateOnly.FromDateTime(date) != DateOnly.FromDateTime(DateTime.Now))
@@ -125,6 +129,7 @@ namespace WowSpellDleAPI.Logic
 
             var guessedSpell = spells
                 .Include(s => s.Name)
+                .Include(s => s.Specs)
                 .Include(s => s.School)
                 .Include(s => s.UseType)
                 .Include(s => s.Class)
@@ -140,7 +145,7 @@ namespace WowSpellDleAPI.Logic
             {
                 model.Spec = GuessFieldAnswer.Incorrect;
             }
-            if (inter.Count() == dailySpell.Specs.Count() 
+            else if (inter.Count() == dailySpell.Specs.Count() 
                 && guessedSpell.Specs.Count() == dailySpell.Specs.Count()) {
                 model.Spec = GuessFieldAnswer.Correct;
             }
