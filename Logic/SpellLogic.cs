@@ -64,33 +64,33 @@ namespace WowSpellDleAPI.Logic
             {
                 throw new Exception("Daily spell has already been generated.");
             }
-            bool identToPreviouses;
-            Random rand = new Random();
-            Spell spell;
-            do
-            {
-                identToPreviouses = false;
-                int toSkip = rand.Next(0, _context.Spells.Count());
-                spell = _context.Spells.Skip(toSkip).Take(1)
+
+            // Get the last 10 daily spell IDs
+            var last10SpellIds = _context.DailySpells
+                .Where(ds => ds.Date >= DateOnly.FromDateTime(today.AddDays(-10)))
+                .Select(ds => ds.SpellId)
+                .ToList();
+
+            // Get spells that weren't used in the last 10 days
+            int spellsCount = _context.Spells.Count();
+            var availableSpells = _context.Spells
+                .Where(s => !last10SpellIds.Contains(s.Id))
                 .Include(s => s.Name)
                 .Include(s => s.School)
                 .Include(s => s.UseType)
                 .Include(s => s.Class)
                 .Include(s => s.Specs)
-                .First();
-                
-                for (int i = 1; i < 10; i++) // check the 10 previous spells
-                {
-                    DateOnly date = DateOnly.FromDateTime(today.AddDays(-1 * i));
-                    var previousDailySpell = _context.DailySpells.Where(ds => ds.Date == date)
-                        .Include(ds => ds.Spell);
-                    if (previousDailySpell.Any() && previousDailySpell.First().Spell.Id == spell.Id)
-                    {
-                        identToPreviouses = true;
-                        continue;
-                    }
-                }
-            } while(identToPreviouses);
+                .ToList();
+
+            if (availableSpells.Count == 0)
+            {
+                throw new Exception("No available spells. All spells were used in the last 10 days.");
+            }
+
+            // Pick a random spell from available ones
+            Random rand = new Random();
+            int randomIndex = rand.Next(0, availableSpells.Count);
+            var spell = availableSpells[randomIndex];
 
             _context.DailySpells.Add(new DailySpell(DateOnly.FromDateTime(today), spell.Id));
             _context.SaveChanges();
