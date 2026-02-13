@@ -19,10 +19,10 @@ namespace WowSpellDleAPI.Logic
         public List<SpellModel> GetAllSpells()
         {
             var spellList = new List<SpellModel>();
-            
+
             var spells = _context.Spells
                 .Include(s => s.Name)
-                .Include( s => s.School)
+                .Include(s => s.School)
                 .Include(s => s.UseType)
                 .Include(s => s.Class)
                 .Include(s => s.Specs)
@@ -56,7 +56,7 @@ namespace WowSpellDleAPI.Logic
 
             return new TranslationFields(name, _class, specs, school, useType);
         }
-        
+
         private Spell GenerateDailySpell()
         {
             DateTime today = DateTime.Now;
@@ -72,7 +72,6 @@ namespace WowSpellDleAPI.Logic
                 .ToList();
 
             // Get spells that weren't used in the last 10 days
-            int spellsCount = _context.Spells.Count();
             var availableSpells = _context.Spells
                 .Where(s => !last10SpellIds.Contains(s.Id))
                 .Include(s => s.Name)
@@ -118,7 +117,7 @@ namespace WowSpellDleAPI.Logic
             }
             return GenerateDailySpell();
 
-        }   
+        }
 
         public GuessAnswerModel GuessAnswer(int Id, DateTime date)
         {
@@ -139,14 +138,15 @@ namespace WowSpellDleAPI.Logic
 
             model.Spell = guessedSpell.Id == dailySpell.Id ? GuessFieldAnswer.Correct : GuessFieldAnswer.Incorrect;
             model.Class = guessedSpell.Class.Id == dailySpell.Class.Id ? GuessFieldAnswer.Correct : GuessFieldAnswer.Incorrect;
-            
+
             var inter = guessedSpell.Specs.Intersect(dailySpell.Specs);
             if (inter.Count() == 0)
             {
                 model.Spec = GuessFieldAnswer.Incorrect;
             }
-            else if (inter.Count() == dailySpell.Specs.Count() 
-                && guessedSpell.Specs.Count() == dailySpell.Specs.Count()) {
+            else if (inter.Count() == dailySpell.Specs.Count()
+                && guessedSpell.Specs.Count() == dailySpell.Specs.Count())
+            {
                 model.Spec = GuessFieldAnswer.Correct;
             }
             else
@@ -156,7 +156,7 @@ namespace WowSpellDleAPI.Logic
 
             model.School = guessedSpell.School.Id == dailySpell.School.Id ? GuessFieldAnswer.Correct : GuessFieldAnswer.Incorrect;
             model.UseType = guessedSpell.UseType.Id == dailySpell.UseType.Id ? GuessFieldAnswer.Correct : GuessFieldAnswer.Incorrect;
-            
+
             if (guessedSpell.Cooldown == dailySpell.Cooldown)
             {
                 model.Cooldown = GuessFieldAnswerRelative.Correct;
@@ -170,6 +170,12 @@ namespace WowSpellDleAPI.Logic
                 model.Cooldown = GuessFieldAnswerRelative.Less;
             }
             return model;
+        }
+
+        public FirstHintModel GetFirstHint(DateTime date)
+        {
+            var dailySpell = GetDailySpell(date);
+            return new FirstHintModel(dailySpell.Name.GetByLanguage("Fr")[0], dailySpell.Name.GetByLanguage("En")[0]);
         }
     }
 }

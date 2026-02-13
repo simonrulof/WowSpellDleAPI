@@ -58,5 +58,18 @@ namespace WowSpellDleAPI.Controllers
                 return StatusCode(500, new { error = "An error occurred while guessing the answer", message = ex.Message });
             }
         }
+
+        [HttpGet("getFirstHint")]
+        public ActionResult<FirstHintModel> GetFirstHint()
+        {
+            try
+            {
+                return Ok(_logic.GetFirstHint(DateTime.Now));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while retrieving the first hint", message = ex.Message });
+            }
+        }
     }
 }
