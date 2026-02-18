@@ -85,6 +85,7 @@ namespace WowSpellDleAPI.Controllers
             }
         }
 
+        [HttpGet("exists/{date}")]
         public ActionResult<bool> SpellExists(DateTime date)
         {
             try
