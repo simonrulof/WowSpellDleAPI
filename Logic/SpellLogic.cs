@@ -177,5 +177,11 @@ namespace WowSpellDleAPI.Logic
             var dailySpell = GetDailySpell(date);
             return new FirstHintModel(dailySpell.Name.GetByLanguage("Fr")[0], dailySpell.Name.GetByLanguage("En")[0]);
         }
+
+        public bool SpellExists(DateTime date)
+        {
+            var dailySpell = _context.DailySpells.Where(ds => ds.Date == DateOnly.FromDateTime(date));
+            return dailySpell.Any();
+        }
     }
 }

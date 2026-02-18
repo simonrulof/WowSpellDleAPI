@@ -68,8 +68,34 @@ namespace WowSpellDleAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "An error occurred while retrieving the first hint", message = ex.Message });
+                return StatusCode(500, new { error = "An error occurred while retrieving the hint", message = ex.Message });
             }
         }
+
+        [HttpGet("getFirstHint/{date}")]
+        public ActionResult<FirstHintModel> GetFirstHintWithDate(DateTime date)
+        {
+            try
+            {
+                return Ok(_logic.GetFirstHint(date));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while retrieving the hint", message = ex.Message });
+            }
+        }
+
+        public ActionResult<bool> SpellExists(DateTime date)
+        {
+            try
+            {
+                return Ok(_logic.SpellExists(date));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while checking if the spell exists", message = ex.Message });
+            }
+        }
+
     }
 }
