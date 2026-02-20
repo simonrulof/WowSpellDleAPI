@@ -85,18 +85,20 @@ namespace WowSpellDleAPI.Controllers
             }
         }
 
-        [HttpGet("exists/{date}")]
-        public ActionResult<bool> SpellExists(DateTime date)
+        [HttpGet("getExistingDates")]
+        public ActionResult<List<DateOnly>> getExistingDates()
         {
             try
             {
-                return Ok(_logic.SpellExists(date));
+                return Ok(_logic.getExistingDates());
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "An error occurred while checking if the spell exists", message = ex.Message });
+                return StatusCode(500, new { error = "An error occurred while getting the existing dates", message = ex.Message });
             }
         }
+
+        
 
     }
 }

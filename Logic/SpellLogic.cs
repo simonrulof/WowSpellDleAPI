@@ -178,10 +178,9 @@ namespace WowSpellDleAPI.Logic
             return new FirstHintModel(dailySpell.Name.GetByLanguage("Fr")[0], dailySpell.Name.GetByLanguage("En")[0]);
         }
 
-        public bool SpellExists(DateTime date)
+        public List<DateOnly> getExistingDates()
         {
-            var dailySpell = _context.DailySpells.Where(ds => ds.Date == DateOnly.FromDateTime(date));
-            return dailySpell.Any();
+            return _context.DailySpells.Select(ds => ds.Date).OrderByDescending(date => date).ToList();
         }
     }
 }
